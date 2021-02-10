@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:order_app/components/order_tile.dart';
 import 'package:order_app/order_model.dart';
+import 'package:order_app/views/ordercount_screen.dart';
 import 'package:order_app/views/search_screen.dart';
 import 'dart:convert' as convert;
 import 'package:pdf/pdf.dart';
@@ -17,14 +18,56 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<OrderModel> orders = List<OrderModel>();
+  var itemName1,
+      itemName2,
+      itemName3,
+      itemName4,
+      itemName5,
+      itemName6,
+      itemName7,
+      itemName8,
+      item1Count,
+      item2Count,
+      item3Count,
+      item4Count,
+      item5Count,
+      item6Count,
+      item7Count,
+      item8Count;
 
   Future<void> getOrderFromSheet() async {
     var response = await http.get(
-        "enter google sheet link here");
+        "https://script.google.com/macros/s/AKfycbwYT7ehONlihoGjuL5IbnvNfHbMVFh4d6iDTea_cdyPA75wy6_rXOZ55w/exec");
 
     orders.clear();
 
-    var jsonOrder = convert.jsonDecode(response.body);
+    var jsonResponse = convert.jsonDecode(response.body);
+
+    var jsonOrder = jsonResponse["data"];
+
+    itemName1 = jsonResponse["itemname1"].toString();
+    item1Count = jsonResponse["item1count"].toString();
+
+    itemName2 = jsonResponse["itemname2"].toString();
+    item2Count = jsonResponse["item2count"].toString();
+
+    itemName3 = jsonResponse["itemname3"].toString();
+    item3Count = jsonResponse["item3count"].toString();
+
+    itemName4 = jsonResponse["itemname4"].toString();
+    item4Count = jsonResponse["item4count"].toString();
+
+    itemName5 = jsonResponse["itemname5"].toString();
+    item5Count = jsonResponse["item5count"].toString();
+
+    itemName6 = jsonResponse["itemname6"].toString();
+    item6Count = jsonResponse["item6count"].toString();
+
+    itemName7 = jsonResponse["itemname7"].toString();
+    item7Count = jsonResponse["item7count"].toString();
+
+    itemName8 = jsonResponse["itemname8"].toString();
+    item8Count = jsonResponse["item8count"].toString();
 
     jsonOrder.forEach((element) {
       OrderModel orderModel = new OrderModel();
@@ -36,7 +79,13 @@ class _HomeState extends State<Home> {
       orderModel.amount = element['amount'];
       orderModel.totalPrice = element['totalPrice'];
 
-      orders.add(orderModel);
+      if (orderModel.orderNo != null &&
+          orderModel.phone != "" &&
+          orderModel.name != "" &&
+          orderModel.areaCode != "" &&
+          orderModel.quantity != 0 &&
+          orderModel.amount != 0 &&
+          orderModel.totalPrice != null) orders.add(orderModel);
     });
 
     setState(() {});
@@ -56,6 +105,37 @@ class _HomeState extends State<Home> {
           "Orders",
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              Icons.list_alt,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderCountScreen(
+                    itemName1: itemName1,
+                    item1Count: item1Count,
+                    itemName2: itemName2,
+                    item2Count: item2Count,
+                    itemName3: itemName3,
+                    item3Count: item3Count,
+                    itemName4: itemName4,
+                    item4Count: item4Count,
+                    itemName5: itemName5,
+                    item5Count: item5Count,
+                    itemName6: itemName6,
+                    item6Count: item6Count,
+                    itemName7: itemName7,
+                    item7Count: item7Count,
+                    itemName8: itemName8,
+                    item8Count: item8Count,
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(
               Icons.search,
@@ -86,7 +166,7 @@ class _HomeState extends State<Home> {
                 ),
               );
             },
-          )
+          ),
         ],
       ),
       body: Container(
